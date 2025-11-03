@@ -5,6 +5,8 @@ import { api } from "@/convex/_generated/api";
 import { DrawingCard } from "@/components/DrawingCard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 
 export default function GalleryPage() {
   const result = useQuery(api.drawings.listDrawings, {
@@ -23,8 +25,23 @@ export default function GalleryPage() {
             <span>Back to Drawing</span>
           </Link>
         </header>
-        <main className="min-h-screen flex items-center justify-center">
-          <p className="text-white">Loading gallery...</p>
+        <main className="min-h-screen py-8 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <Skeleton className="aspect-square w-full" />
+                  <div className="p-4 space-y-2">
+                    <Skeleton className="h-5 w-3/4" />
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
         </main>
       </div>
     );
