@@ -26,6 +26,24 @@ export function DrawingKnob({
   const [lastTouchTime, setLastTouchTime] = useState(0);
   const [lastTouchAngle, setLastTouchAngle] = useState(0);
   const momentumRef = useRef<number | null>(null);
+  const keysPressedRef = useRef<Set<string>>(new Set());
+  const keyboardAnimationRef = useRef<number | null>(null);
+  const valueRef = useRef(value);
+  const onChangeRef = useRef(onChange);
+  const keyboardKeysRef = useRef(keyboardKeys);
+
+  // Update refs when values change
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  useEffect(() => {
+    keyboardKeysRef.current = keyboardKeys;
+  }, [keyboardKeys]);
 
   // Spring animation for smooth rotation
   const rotation = useMotionValue(value * 360);
@@ -76,18 +94,18 @@ export function DrawingKnob({
     const angle = getAngleFromCenter(touch.clientX, touch.clientY);
     const now = Date.now();
     const timeDelta = now - lastTouchTime;
-    
+
     if (timeDelta > 0) {
       const angleDelta = angle - lastTouchAngle;
       // Normalize angle delta to [-180, 180]
       let normalizedDelta = angleDelta;
       if (normalizedDelta > 180) normalizedDelta -= 360;
       if (normalizedDelta < -180) normalizedDelta += 360;
-      
+
       const velocity = normalizedDelta / timeDelta;
       setTouchVelocity(velocity);
     }
-    
+
     setLastTouchAngle(angle);
     setLastTouchTime(now);
 
@@ -106,7 +124,7 @@ export function DrawingKnob({
   // Handle touch end with momentum
   const handleTouchEnd = () => {
     setIsDragging(false);
-    
+
     // Apply momentum with friction
     if (Math.abs(touchVelocity) > 0.1) {
       const friction = 0.95;
@@ -134,20 +152,80 @@ export function DrawingKnob({
     }
   };
 
-  // Handle keyboard controls
+  // Handle keyboard controls with continuous movement
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === keyboardKeys.increment || e.key === keyboardKeys.decrement) {
+      const keys = keyboardKeysRef.current;
+      if (e.key === keys.increment || e.key === keys.decrement) {
         e.preventDefault();
-        const delta = e.key === keyboardKeys.increment ? 0.01 : -0.01;
-        const newValue = Math.max(0, Math.min(1, value + delta));
-        onChange(newValue);
+
+        // Prevent key repeat from interfering
+        if (keysPressedRef.current.has(e.key)) {
+          return;
+        }
+
+        keysPressedRef.current.add(e.key);
+
+        // Start animation loop if not already running
+        if (keyboardAnimationRef.current === null) {
+          const update = () => {
+            // Get current value from ref to avoid stale closure
+            let newValue = valueRef.current;
+            const currentKeys = keyboardKeysRef.current;
+            let changed = false;
+
+            if (keysPressedRef.current.has(currentKeys.increment)) {
+              newValue = Math.max(0, Math.min(1, newValue + 0.004));
+              changed = true;
+            }
+            if (keysPressedRef.current.has(currentKeys.decrement)) {
+              newValue = Math.max(0, Math.min(1, newValue - 0.004));
+              changed = true;
+            }
+
+            if (changed) {
+              onChangeRef.current(newValue);
+              // Update ref immediately so next frame has latest value
+              valueRef.current = newValue;
+            }
+
+            if (keysPressedRef.current.size > 0) {
+              keyboardAnimationRef.current = requestAnimationFrame(update);
+            } else {
+              keyboardAnimationRef.current = null;
+            }
+          };
+          keyboardAnimationRef.current = requestAnimationFrame(update);
+        }
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      const keys = keyboardKeysRef.current;
+      if (e.key === keys.increment || e.key === keys.decrement) {
+        keysPressedRef.current.delete(e.key);
+        if (
+          keysPressedRef.current.size === 0 &&
+          keyboardAnimationRef.current !== null
+        ) {
+          cancelAnimationFrame(keyboardAnimationRef.current);
+          keyboardAnimationRef.current = null;
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [keyboardKeys, value, onChange]);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+      if (keyboardAnimationRef.current !== null) {
+        cancelAnimationFrame(keyboardAnimationRef.current);
+        keyboardAnimationRef.current = null;
+      }
+    };
+  }, []); // Empty dependency array - use refs for everything
 
   return (
     <div className={`flex flex-col items-center gap-2 ${className || ""}`}>
@@ -162,20 +240,19 @@ export function DrawingKnob({
       >
         {/* Knob base */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-700 dark:to-gray-900 shadow-lg border-2 border-gray-400 dark:border-gray-600" />
-        
+
         {/* Concentric rings */}
         <div className="absolute inset-2 rounded-full border-2 border-gray-400 dark:border-gray-600" />
         <div className="absolute inset-4 rounded-full border border-gray-300 dark:border-gray-700" />
-        
+
         {/* Center dot */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-2 h-2 rounded-full bg-gray-600 dark:bg-gray-400" />
         </div>
-        
+
         {/* Rotation indicator */}
         <div className="absolute top-1 left-1/2 -translate-x-1/2 w-1 h-3 rounded-full bg-red-500 dark:bg-red-400" />
       </motion.div>
     </div>
   );
 }
-
