@@ -10,7 +10,7 @@ export const saveDrawing = mutation({
         x: v.number(),
         y: v.number(),
         timestamp: v.number(),
-      })
+      }),
     ),
     canvasWidth: v.number(),
     canvasHeight: v.number(),
@@ -43,12 +43,12 @@ export const getDrawing = query({
           x: v.number(),
           y: v.number(),
           timestamp: v.number(),
-        })
+        }),
       ),
       canvasWidth: v.number(),
       canvasHeight: v.number(),
     }),
-    v.null()
+    v.null(),
   ),
   handler: async (ctx, args) => {
     const drawing = await ctx.db.get(args.id);
@@ -75,14 +75,22 @@ export const listDrawings = query({
             x: v.number(),
             y: v.number(),
             timestamp: v.number(),
-          })
+          }),
         ),
         canvasWidth: v.number(),
         canvasHeight: v.number(),
-      })
+      }),
     ),
     isDone: v.boolean(),
     continueCursor: v.string(),
+    pageStatus: v.optional(
+      v.union(
+        v.literal("SplitRecommended"),
+        v.literal("SplitRequired"),
+        v.null(),
+      ),
+    ),
+    splitCursor: v.optional(v.union(v.string(), v.null())),
   }),
   handler: async (ctx, args) => {
     return await ctx.db
@@ -91,4 +99,3 @@ export const listDrawings = query({
       .paginate(args.paginationOpts);
   },
 });
-
