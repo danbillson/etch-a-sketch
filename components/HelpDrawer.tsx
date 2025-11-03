@@ -21,6 +21,7 @@ const shortcuts: KeyboardShortcuts[] = [
   { key: "E", description: "Erase drawing" },
   { key: "Ctrl+S / Cmd+S", description: "Save & share drawing" },
   { key: "G", description: "Go to gallery" },
+  { key: "U", description: "Upload image to draw" },
   { key: "?", description: "Show/hide help" },
 ];
 

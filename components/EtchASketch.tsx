@@ -7,8 +7,6 @@ import { SaveDialog } from "./SaveDialog";
 import { HelpDrawer, HelpButton } from "./HelpDrawer";
 import { ImageUploadDialog } from "./ImageUploadDialog";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
 
 interface Point {
   x: number;
@@ -81,7 +79,14 @@ export function EtchASketch() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't handle shortcuts when dialogs are open
+      // Allow ? key to toggle help drawer even when it's open
+      if (e.key === "?") {
+        e.preventDefault();
+        setHelpOpen((prev) => !prev);
+        return;
+      }
+
+      // Don't handle other shortcuts when dialogs are open
       if (saveDialogOpen || helpOpen || imageUploadOpen) {
         return;
       }
@@ -98,9 +103,9 @@ export function EtchASketch() {
       } else if (e.key === "g" || e.key === "G") {
         e.preventDefault();
         router.push("/gallery");
-      } else if (e.key === "?") {
+      } else if (e.key === "u" || e.key === "U") {
         e.preventDefault();
-        setHelpOpen((prev) => !prev);
+        setImageUploadOpen(true);
       }
     };
 
@@ -136,20 +141,6 @@ export function EtchASketch() {
   return (
     <>
       <HelpButton onClick={() => setHelpOpen(true)} />
-      
-      {/* Upload Image Button */}
-      <div className="fixed top-4 right-4 z-50">
-        <Button
-          onClick={() => setImageUploadOpen(true)}
-          variant="outline"
-          size="icon"
-          className="shadow-lg"
-          disabled={saveDialogOpen || helpOpen || imageUploadOpen}
-        >
-          <Upload className="w-4 h-4" />
-          <span className="sr-only">Upload Image</span>
-        </Button>
-      </div>
 
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
         {/* Container for frame and knobs */}
