@@ -16,8 +16,16 @@ export default function GalleryPage() {
 
   if (result === undefined) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading gallery...</p>
+      <div className="min-h-screen bg-red-600">
+        <header className="p-4">
+          <Link href="/" className="text-white hover:text-gray-200 transition-colors inline-flex items-center gap-2">
+            <span className="text-lg">←</span>
+            <span>Back to Drawing</span>
+          </Link>
+        </header>
+        <main className="min-h-screen flex items-center justify-center">
+          <p className="text-white">Loading gallery...</p>
+        </main>
       </div>
     );
   }
@@ -25,25 +33,23 @@ export default function GalleryPage() {
   const { page, isDone, continueCursor } = result;
 
   return (
-    <>
-      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm p-4 border-b-2 border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center">
-        <h1 className="text-xl font-bold">Gallery</h1>
-        <Link href="/">
-          <Button variant="outline" size="sm">
-            ← Back to Drawing
-          </Button>
+    <div className="min-h-screen bg-red-600">
+      <header className="p-4">
+        <Link href="/" className="text-white hover:text-gray-200 transition-colors inline-flex items-center gap-2">
+          <span className="text-lg">←</span>
+          <span>Back to Drawing</span>
         </Link>
       </header>
-      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 py-8 px-4">
+      <main className="min-h-screen py-8 px-4">
         <div className="max-w-6xl mx-auto">
           {page.length === 0 ? (
             <div className="text-center py-16">
-              <h2 className="text-2xl font-bold mb-4">No drawings yet</h2>
-              <p className="text-muted-foreground mb-6">
+              <h2 className="text-2xl font-bold mb-4 text-white">No drawings yet</h2>
+              <p className="text-white/80 mb-6">
                 Be the first to create something amazing!
               </p>
               <Link href="/">
-                <Button>Start Drawing</Button>
+                <Button className="bg-white hover:bg-gray-100">Start Drawing</Button>
               </Link>
             </div>
           ) : (
@@ -55,7 +61,7 @@ export default function GalleryPage() {
               </div>
               {!isDone && (
                 <div className="text-center mt-8">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/80">
                     More drawings available...
                   </p>
                 </div>
@@ -64,7 +70,7 @@ export default function GalleryPage() {
           )}
         </div>
       </main>
-    </>
+    </div>
   );
 }
 

@@ -45,7 +45,7 @@ export function DrawingReplay({
     // Set background
     ctx.fillStyle = "#e5e7eb";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    
+
     // Configure drawing style
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 2;
@@ -56,11 +56,11 @@ export function DrawingReplay({
     if (points.length > 0) {
       ctx.beginPath();
       ctx.moveTo(points[0].x, points[0].y);
-      
+
       for (let i = 1; i < points.length; i++) {
         ctx.lineTo(points[i].x, points[i].y);
       }
-      
+
       ctx.stroke();
     }
   }, [points, canvasWidth, canvasHeight]);
@@ -80,7 +80,7 @@ export function DrawingReplay({
   const handleTwitterShare = () => {
     const text = `Check out my Etch-A-Sketch drawing: ${name}`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      text
+      text,
     )}&url=${encodeURIComponent(shareUrl)}`;
     window.open(url, "_blank");
   };
@@ -88,12 +88,10 @@ export function DrawingReplay({
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-white">{name}</h1>
+      <div className="text-center mb-2">
+        <h1 className="text-3xl font-bold text-white">{name}</h1>
         {twitterHandle && (
-          <p className="text-sm text-white/80">
-            by {twitterHandle}
-          </p>
+          <p className="text-sm text-white/80">@{twitterHandle}</p>
         )}
       </div>
 
@@ -110,7 +108,11 @@ export function DrawingReplay({
 
       {/* Share buttons */}
       <div className="flex gap-4 items-center">
-        <Button onClick={handleCopy} variant="outline" className="gap-2 bg-white hover:bg-gray-100">
+        <Button
+          onClick={handleCopy}
+          variant="outline"
+          className="gap-2 bg-white hover:bg-gray-100"
+        >
           {copied ? (
             <>
               <Copy className="w-4 h-4" />
@@ -123,7 +125,11 @@ export function DrawingReplay({
             </>
           )}
         </Button>
-        <Button onClick={handleTwitterShare} variant="outline" className="gap-2 bg-white hover:bg-gray-100">
+        <Button
+          onClick={handleTwitterShare}
+          variant="outline"
+          className="gap-2 bg-white hover:bg-gray-100"
+        >
           <Twitter className="w-4 h-4" />
           Share on Twitter
         </Button>
@@ -131,4 +137,3 @@ export function DrawingReplay({
     </div>
   );
 }
-
