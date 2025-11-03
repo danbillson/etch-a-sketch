@@ -1,5 +1,6 @@
 "use client";
 
+import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { DrawingReplay } from "@/components/DrawingReplay";
@@ -8,7 +9,7 @@ import Link from "next/link";
 
 export default function DrawingPage() {
   const params = useParams();
-  const id = params.id as string;
+  const id = params.id as Id<"drawings">;
 
   const drawing = useQuery(api.drawings.getDrawing, { id });
 
