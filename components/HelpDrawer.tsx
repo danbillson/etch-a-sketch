@@ -17,7 +17,7 @@ interface KeyboardShortcuts {
 
 const shortcuts: KeyboardShortcuts[] = [
   { key: "A / S", description: "Rotate horizontal knob (left/right)" },
-  { key: "K / L", description: "Rotate vertical knob (down/up)" },
+  { key: "K / L", description: "Rotate vertical knob (K=down, L=up)" },
   { key: "E", description: "Erase drawing" },
   { key: "Ctrl+S / Cmd+S", description: "Save & share drawing" },
   { key: "G", description: "Go to gallery" },

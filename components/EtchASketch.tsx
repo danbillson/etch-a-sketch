@@ -179,7 +179,7 @@ export function EtchASketch() {
               <DrawingKnob
                 value={yValue}
                 onChange={setYValue}
-                keyboardKeys={{ increment: "l", decrement: "k" }}
+                keyboardKeys={{ increment: "k", decrement: "l" }}
                 disabled={saveDialogOpen || helpOpen}
               />
             </div>
