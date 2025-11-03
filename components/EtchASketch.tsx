@@ -70,6 +70,11 @@ export function EtchASketch() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle shortcuts when dialogs are open
+      if (saveDialogOpen || helpOpen) {
+        return;
+      }
+
       // Prevent default for our shortcuts
       if (e.key === "e" || e.key === "E") {
         e.preventDefault();
@@ -90,7 +95,7 @@ export function EtchASketch() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [points.length, router]);
+  }, [points.length, router, saveDialogOpen, helpOpen]);
 
   // Set up device motion listener for shake
   useEffect(() => {
@@ -151,6 +156,7 @@ export function EtchASketch() {
                 value={xValue}
                 onChange={setXValue}
                 keyboardKeys={{ increment: "s", decrement: "a" }}
+                disabled={saveDialogOpen || helpOpen}
               />
             </div>
             <div className="shrink-0">
@@ -158,6 +164,7 @@ export function EtchASketch() {
                 value={yValue}
                 onChange={setYValue}
                 keyboardKeys={{ increment: "l", decrement: "k" }}
+                disabled={saveDialogOpen || helpOpen}
               />
             </div>
           </div>

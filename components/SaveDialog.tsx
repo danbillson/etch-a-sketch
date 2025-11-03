@@ -152,9 +152,14 @@ export function SaveDialog({
                 <Label htmlFor="name">Name *</Label>
                 <Input
                   id="name"
+                  name="drawing-name"
                   placeholder="My Amazing Drawing"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  autoComplete="off"
+                  data-1p-ignore
+                  data-lpignore="true"
+                  data-form-type="other"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleSave();
@@ -166,9 +171,14 @@ export function SaveDialog({
                 <Label htmlFor="twitter">Twitter Handle (optional)</Label>
                 <Input
                   id="twitter"
+                  name="twitter-handle"
                   placeholder="@username"
                   value={twitterHandle}
                   onChange={(e) => setTwitterHandle(e.target.value)}
+                  autoComplete="off"
+                  data-1p-ignore
+                  data-lpignore="true"
+                  data-form-type="other"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleSave();

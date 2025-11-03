@@ -9,6 +9,7 @@ interface DrawingKnobProps {
   label?: string;
   keyboardKeys: { increment: string; decrement: string };
   className?: string;
+  disabled?: boolean;
 }
 
 export function DrawingKnob({
@@ -17,6 +18,7 @@ export function DrawingKnob({
   label,
   keyboardKeys,
   className,
+  disabled = false,
 }: DrawingKnobProps) {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -154,6 +156,16 @@ export function DrawingKnob({
 
   // Handle keyboard controls with continuous movement
   useEffect(() => {
+    if (disabled) {
+      // Clear any ongoing animation and pressed keys
+      keysPressedRef.current.clear();
+      if (keyboardAnimationRef.current !== null) {
+        cancelAnimationFrame(keyboardAnimationRef.current);
+        keyboardAnimationRef.current = null;
+      }
+      return;
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const keys = keyboardKeysRef.current;
       if (e.key === keys.increment || e.key === keys.decrement) {
@@ -225,7 +237,7 @@ export function DrawingKnob({
         keyboardAnimationRef.current = null;
       }
     };
-  }, []); // Empty dependency array - use refs for everything
+  }, [disabled]); // Re-run when disabled state changes
 
   return (
     <div className={`flex flex-col items-center gap-2 ${className || ""}`}>
