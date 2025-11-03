@@ -7,7 +7,6 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from "./ui/drawer";
-import { Button } from "./ui/button";
 import { HelpCircle } from "lucide-react";
 
 interface KeyboardShortcuts {
@@ -17,9 +16,9 @@ interface KeyboardShortcuts {
 
 const shortcuts: KeyboardShortcuts[] = [
   { key: "A / S", description: "Rotate horizontal knob (left/right)" },
-  { key: "K / L", description: "Rotate vertical knob (K=down, L=up)" },
+  { key: "K / L", description: "Rotate vertical knob (down/up)" },
   { key: "E", description: "Erase drawing" },
-  { key: "Ctrl+S / Cmd+S", description: "Save & share drawing" },
+  { key: "Ctrl+S / Cmd+S", description: "Share drawing" },
   { key: "G", description: "Go to gallery" },
   { key: "U", description: "Upload image to draw" },
   { key: "?", description: "Show/hide help" },
@@ -71,4 +70,3 @@ export function HelpButton({ onClick }: { onClick: () => void }) {
     </button>
   );
 }
-
