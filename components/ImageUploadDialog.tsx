@@ -71,8 +71,16 @@ export function ImageUploadDialog({
       setProgress(50);
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to process image");
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const error = await response.json();
+          throw new Error(error.error || error.details || "Failed to process image");
+        } else {
+          // Response is HTML (error page)
+          const text = await response.text();
+          throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
       }
 
       const data = await response.json();
