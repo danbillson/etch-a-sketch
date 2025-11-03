@@ -14,54 +14,62 @@ export default function DrawingPage() {
 
   if (drawing === undefined) {
     return (
-      <>
-        <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm p-4 border-b-2 border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center">
-          <h1 className="text-xl font-bold">Etch-A-Sketch</h1>
-          <Link href="/" className="text-sm underline hover:no-underline">
-            ← Back to Drawing
+      <div className="min-h-screen bg-red-600">
+        <header className="p-4">
+          <Link
+            href="/"
+            className="text-white hover:text-gray-200 transition-colors inline-flex items-center gap-2"
+          >
+            <span className="text-lg">←</span>
+            <span>Back to Drawing</span>
           </Link>
         </header>
-        <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 py-8 flex items-center justify-center">
-          <p>Loading...</p>
+        <main className="min-h-screen flex items-center justify-center">
+          <p className="text-white">Loading...</p>
         </main>
-      </>
+      </div>
     );
   }
 
   if (drawing === null) {
     return (
-      <>
-        <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm p-4 border-b-2 border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center">
-          <h1 className="text-xl font-bold">Etch-A-Sketch</h1>
-          <Link href="/" className="text-sm underline hover:no-underline">
-            ← Back to Drawing
+      <div className="min-h-screen bg-red-600">
+        <header className="p-4">
+          <Link
+            href="/"
+            className="text-white hover:text-gray-200 transition-colors inline-flex items-center gap-2"
+          >
+            <span className="text-lg">←</span>
+            <span>Back to Drawing</span>
           </Link>
         </header>
-        <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 py-8 flex items-center justify-center">
-          <div className="text-center">
+        <main className="min-h-screen flex items-center justify-center">
+          <div className="text-center text-white">
             <h2 className="text-2xl font-bold mb-4">Drawing not found</h2>
-            <Link href="/">
-              <button className="text-primary underline hover:no-underline">
-                Go back to drawing
-              </button>
+            <Link href="/" className="underline hover:no-underline">
+              Go back to drawing
             </Link>
           </div>
         </main>
-      </>
+      </div>
     );
   }
 
-  const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/d/${id}` : "";
+  const shareUrl =
+    typeof window !== "undefined" ? `${window.location.origin}/d/${id}` : "";
 
   return (
-    <>
-      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm p-4 border-b-2 border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center">
-        <h1 className="text-xl font-bold">Etch-A-Sketch</h1>
-        <Link href="/" className="text-sm underline hover:no-underline">
-          ← Back to Drawing
+    <div className="min-h-screen bg-red-600">
+      <header className="p-4">
+        <Link
+          href="/"
+          className="text-white hover:text-gray-200 transition-colors inline-flex items-center gap-2"
+        >
+          <span className="text-lg">←</span>
+          <span>Back to Drawing</span>
         </Link>
       </header>
-      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 py-8">
+      <main className="min-h-screen">
         <DrawingReplay
           points={drawing.points}
           canvasWidth={drawing.canvasWidth}
@@ -71,7 +79,6 @@ export default function DrawingPage() {
           shareUrl={shareUrl}
         />
       </main>
-    </>
+    </div>
   );
 }
-

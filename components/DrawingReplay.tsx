@@ -86,23 +86,23 @@ export function DrawingReplay({
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 p-6 max-w-4xl mx-auto">
+    <div className="flex flex-col items-center justify-center min-h-screen p-6">
       {/* Header */}
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2">{name}</h1>
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold mb-2 text-white">{name}</h1>
         {twitterHandle && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/80">
             by {twitterHandle}
           </p>
         )}
       </div>
 
       {/* Canvas */}
-      <div className="flex-shrink-0 w-full flex justify-center px-4">
-        <div className="w-full max-w-2xl">
+      <div className="shrink-0 w-full md:w-auto flex justify-center mb-8">
+        <div className="w-full max-w-full md:max-w-none bg-gray-200 dark:bg-gray-300 p-2 rounded-lg border-4 border-red-800">
           <canvas
             ref={canvasRef}
-            className="rounded-lg border-2 border-gray-400 dark:border-gray-600 touch-none w-full h-auto"
+            className="rounded w-full h-auto"
             style={{ imageRendering: "pixelated" }}
           />
         </div>
@@ -110,7 +110,7 @@ export function DrawingReplay({
 
       {/* Share buttons */}
       <div className="flex gap-4 items-center">
-        <Button onClick={handleCopy} variant="outline" className="gap-2">
+        <Button onClick={handleCopy} variant="outline" className="gap-2 bg-white hover:bg-gray-100">
           {copied ? (
             <>
               <Copy className="w-4 h-4" />
@@ -123,7 +123,7 @@ export function DrawingReplay({
             </>
           )}
         </Button>
-        <Button onClick={handleTwitterShare} variant="outline" className="gap-2">
+        <Button onClick={handleTwitterShare} variant="outline" className="gap-2 bg-white hover:bg-gray-100">
           <Twitter className="w-4 h-4" />
           Share on Twitter
         </Button>
