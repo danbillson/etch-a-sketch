@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
-import { Play, Pause, Copy, Twitter } from "lucide-react";
+import { Copy, Twitter } from "lucide-react";
 import { toast } from "sonner";
 
 interface Point {
@@ -29,14 +29,9 @@ export function DrawingReplay({
   shareUrl,
 }: DrawingReplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const animationFrameRef = useRef<number | null>(null);
-  const startTimeRef = useRef<number>(0);
-  const currentIndexRef = useRef<number>(0);
   const [copied, setCopied] = useState(false);
 
-  // Setup canvas
+  // Setup canvas and draw the complete drawing
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -47,138 +42,28 @@ export function DrawingReplay({
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
+    // Set background
     ctx.fillStyle = "#e5e7eb";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    
+    // Configure drawing style
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 2;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-  }, [canvasWidth, canvasHeight]);
 
-  // Reset canvas
-  const resetCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.fillStyle = "#e5e7eb";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    currentIndexRef.current = 0;
-    setProgress(0);
-    setIsPlaying(false);
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
+    // Draw all points at once
+    if (points.length > 0) {
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      
+      for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y);
+      }
+      
+      ctx.stroke();
     }
-  };
-
-  // Play animation
-  const play = () => {
-    if (points.length === 0) return;
-
-    setIsPlaying(true);
-    const startIndex = currentIndexRef.current;
-    
-    // Calculate start time based on current progress
-    const startTimestamp = startIndex > 0 
-      ? points[startIndex - 1].timestamp 
-      : points[0].timestamp;
-    
-    startTimeRef.current = performance.now() - (startTimestamp - points[0].timestamp) * 0.5;
-
-    const animate = () => {
-      const now = performance.now();
-      const elapsed = now - startTimeRef.current;
-      const currentTime = points[0].timestamp + elapsed * 2; // 2x speed
-
-      const canvas = canvasRef.current;
-      if (!canvas) {
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-          animationFrameRef.current = null;
-        }
-        return;
-      }
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-          animationFrameRef.current = null;
-        }
-        return;
-      }
-
-      // Find the next point to draw
-      let nextIndex = currentIndexRef.current;
-      while (
-        nextIndex < points.length &&
-        points[nextIndex].timestamp <= currentTime
-      ) {
-        nextIndex++;
-      }
-
-      // Draw up to nextIndex
-      if (nextIndex > currentIndexRef.current) {
-        ctx.beginPath();
-        ctx.moveTo(
-          points[currentIndexRef.current].x,
-          points[currentIndexRef.current].y
-        );
-
-        for (let i = currentIndexRef.current + 1; i < nextIndex; i++) {
-          ctx.lineTo(points[i].x, points[i].y);
-        }
-
-        ctx.stroke();
-        currentIndexRef.current = nextIndex;
-        setProgress((nextIndex / points.length) * 100);
-      }
-
-      // Check if finished
-      if (nextIndex >= points.length) {
-        setIsPlaying(false);
-        setProgress(100);
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-          animationFrameRef.current = null;
-        }
-      } else {
-        animationFrameRef.current = requestAnimationFrame(animate);
-      }
-    };
-
-    animationFrameRef.current = requestAnimationFrame(animate);
-  };
-
-  // Pause animation
-  const pause = () => {
-    setIsPlaying(false);
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-  };
-
-  // Toggle play/pause
-  const togglePlay = () => {
-    if (isPlaying) {
-      pause();
-    } else {
-      play();
-    }
-  };
-
-  // Handle cleanup
-  useEffect(() => {
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, []);
+  }, [points, canvasWidth, canvasHeight]);
 
   const handleCopy = async () => {
     try {
@@ -223,57 +108,25 @@ export function DrawingReplay({
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="flex flex-col gap-4 items-center w-full">
-        <div className="flex gap-4 items-center">
-          <Button onClick={togglePlay} variant="outline" className="gap-2">
-            {isPlaying ? (
-              <>
-                <Pause className="w-4 h-4" />
-                Pause
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4" />
-                Play
-              </>
-            )}
-          </Button>
-          <Button onClick={resetCanvas} variant="outline">
-            Reset
-          </Button>
-        </div>
-
-        {/* Progress bar */}
-        <div className="w-full max-w-md">
-          <div className="h-2 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary transition-all duration-100"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Share buttons */}
-        <div className="flex gap-4 items-center">
-          <Button onClick={handleCopy} variant="outline" className="gap-2">
-            {copied ? (
-              <>
-                <Copy className="w-4 h-4" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4" />
-                Copy Link
-              </>
-            )}
-          </Button>
-          <Button onClick={handleTwitterShare} variant="outline" className="gap-2">
-            <Twitter className="w-4 h-4" />
-            Share on Twitter
-          </Button>
-        </div>
+      {/* Share buttons */}
+      <div className="flex gap-4 items-center">
+        <Button onClick={handleCopy} variant="outline" className="gap-2">
+          {copied ? (
+            <>
+              <Copy className="w-4 h-4" />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Copy className="w-4 h-4" />
+              Copy Link
+            </>
+          )}
+        </Button>
+        <Button onClick={handleTwitterShare} variant="outline" className="gap-2">
+          <Twitter className="w-4 h-4" />
+          Share on Twitter
+        </Button>
       </div>
     </div>
   );
