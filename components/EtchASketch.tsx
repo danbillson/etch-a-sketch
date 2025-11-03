@@ -145,6 +145,30 @@ export function EtchASketch() {
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
         {/* Container for frame and knobs */}
         <div className="relative flex flex-col items-center">
+          {/* Etch A Sketch Logo */}
+          <div className="mb-6">
+            <h1 
+              className="text-2xl md:text-3xl font-black italic select-none"
+              style={{
+                fontFamily: 'Comic Sans MS, Arial Rounded MT Bold, Arial, sans-serif',
+                color: '#FFD700', // Bright yellow
+                textShadow: `
+                  -2px -2px 0 #6B46C1,
+                  2px -2px 0 #6B46C1,
+                  -2px 2px 0 #6B46C1,
+                  2px 2px 0 #6B46C1,
+                  3px 3px 0 #6B46C1,
+                  4px 4px 0 #6B46C1
+                `,
+                transform: 'skewX(-8deg)',
+                letterSpacing: '2px',
+                lineHeight: '1.1',
+              }}
+            >
+              Etch A Sketch<sup className="text-lg align-super">®</sup>
+            </h1>
+          </div>
+
           {/* Main drawing area - styled like classic Etch-A-Sketch */}
 
           {/* Canvas */}
