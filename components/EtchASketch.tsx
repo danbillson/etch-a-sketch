@@ -122,18 +122,9 @@ export function EtchASketch() {
       <HelpButton onClick={() => setHelpOpen(true)} />
 
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
-        {/* Main drawing area - styled like classic Etch-A-Sketch */}
-        <div
-          id="etch-container"
-          className="flex flex-col md:flex-row items-center gap-6 p-6 bg-gradient-to-br from-red-600 to-red-700 rounded-3xl shadow-2xl border-8 border-red-800 transition-all"
-        >
-          {/* Left knob */}
-          <DrawingKnob
-            value={xValue}
-            onChange={setXValue}
-            label="Horizontal"
-            keyboardKeys={{ increment: "s", decrement: "a" }}
-          />
+        {/* Container for frame and knobs */}
+        <div className="relative flex flex-col items-center">
+          {/* Main drawing area - styled like classic Etch-A-Sketch */}
 
           {/* Canvas */}
           <div className="shrink-0 w-full md:w-auto flex justify-center">
@@ -150,13 +141,26 @@ export function EtchASketch() {
             </div>
           </div>
 
-          {/* Right knob */}
-          <DrawingKnob
-            value={yValue}
-            onChange={setYValue}
-            label="Vertical"
-            keyboardKeys={{ increment: "l", decrement: "k" }}
-          />
+          {/* Knobs below the frame, positioned at left and right edges */}
+          <div
+            className="relative flex flex-row justify-between items-start mt-6 w-full"
+            style={{ width: `${CANVAS_WIDTH + 112}px`, maxWidth: "100%" }}
+          >
+            <div className="shrink-0">
+              <DrawingKnob
+                value={xValue}
+                onChange={setXValue}
+                keyboardKeys={{ increment: "s", decrement: "a" }}
+              />
+            </div>
+            <div className="shrink-0">
+              <DrawingKnob
+                value={yValue}
+                onChange={setYValue}
+                keyboardKeys={{ increment: "l", decrement: "k" }}
+              />
+            </div>
+          </div>
         </div>
       </div>
 

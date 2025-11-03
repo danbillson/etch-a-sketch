@@ -6,7 +6,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 interface DrawingKnobProps {
   value: number;
   onChange: (value: number) => void;
-  label: string;
+  label?: string;
   keyboardKeys: { increment: string; decrement: string };
   className?: string;
 }
@@ -151,7 +151,7 @@ export function DrawingKnob({
 
   return (
     <div className={`flex flex-col items-center gap-2 ${className || ""}`}>
-      <div className="text-xs text-muted-foreground">{label}</div>
+      {label && <div className="text-xs text-muted-foreground">{label}</div>}
       <motion.div
         ref={knobRef}
         className="relative w-20 h-20 cursor-grab active:cursor-grabbing touch-none select-none"
