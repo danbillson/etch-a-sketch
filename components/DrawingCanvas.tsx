@@ -11,6 +11,7 @@ interface Point {
 export interface DrawingCanvasRef {
   erase: () => void;
   getPoints: () => Point[];
+  injectPoints: (points: Point[]) => void;
 }
 
 interface DrawingCanvasProps {
@@ -233,13 +234,36 @@ export const DrawingCanvas = React.forwardRef<
     redraw();
   };
 
+  // Inject points programmatically (for AI-generated paths)
+  const injectPoints = (points: Point[]) => {
+    if (points.length === 0) return;
+    
+    setCurrentPath((prev) => {
+      const newPath = [...prev, ...points];
+      currentPathRef.current = newPath;
+      return newPath;
+    });
+    
+    // Update last point
+    if (points.length > 0) {
+      lastPointRef.current = points[points.length - 1];
+    }
+    
+    // Update drawing state
+    setIsDrawing(true);
+    isDrawingRef.current = true;
+    
+    // Trigger redraw
+    redraw();
+  };
+
   // Expose methods via ref
   useEffect(() => {
     if (ref) {
       if (typeof ref === "function") {
-        ref({ erase, getPoints: () => currentPath });
+        ref({ erase, getPoints: () => currentPath, injectPoints });
       } else {
-        ref.current = { erase, getPoints: () => currentPath };
+        ref.current = { erase, getPoints: () => currentPath, injectPoints };
       }
     }
   }, [ref, currentPath]);

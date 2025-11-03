@@ -24,6 +24,21 @@ If you're reading this README on GitHub and want to use this template, run:
 npm create convex@latest -- -t nextjs
 ```
 
+## Environment Variables
+
+To enable AI-powered image-to-drawing conversion, you'll need to set up an OpenAI API key:
+
+1. Create a `.env.local` file in the root directory
+2. Add your OpenAI API key:
+
+```
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+You can get an API key from [OpenAI](https://platform.openai.com/api-keys).
+
+**Note:** The image upload feature requires a valid OpenAI API key. Without it, image processing will fail.
+
 ## Learn more
 
 To learn more about developing your project with Convex, check out:

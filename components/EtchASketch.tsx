@@ -5,7 +5,10 @@ import { DrawingKnob } from "./DrawingKnob";
 import { DrawingCanvas, DrawingCanvasRef } from "./DrawingCanvas";
 import { SaveDialog } from "./SaveDialog";
 import { HelpDrawer, HelpButton } from "./HelpDrawer";
+import { ImageUploadDialog } from "./ImageUploadDialog";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
 
 interface Point {
   x: number;
@@ -20,6 +23,7 @@ export function EtchASketch() {
   const [points, setPoints] = useState<Point[]>([]);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [imageUploadOpen, setImageUploadOpen] = useState(false);
   const canvasRef = useRef<DrawingCanvasRef>(null);
 
   // Responsive canvas size
@@ -52,6 +56,13 @@ export function EtchASketch() {
     setPoints((prev) => [...prev, point]);
   };
 
+  const handleImageProcessed = (newPoints: Point[]) => {
+    // Inject points into canvas
+    canvasRef.current?.injectPoints(newPoints);
+    // Also update points state for saving
+    setPoints((prev) => [...prev, ...newPoints]);
+  };
+
   const handleErase = () => {
     canvasRef.current?.erase();
     setPoints([]);
@@ -71,7 +82,7 @@ export function EtchASketch() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't handle shortcuts when dialogs are open
-      if (saveDialogOpen || helpOpen) {
+      if (saveDialogOpen || helpOpen || imageUploadOpen) {
         return;
       }
 
@@ -95,7 +106,7 @@ export function EtchASketch() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [points.length, router, saveDialogOpen, helpOpen]);
+  }, [points.length, router, saveDialogOpen, helpOpen, imageUploadOpen]);
 
   // Set up device motion listener for shake
   useEffect(() => {
@@ -125,6 +136,20 @@ export function EtchASketch() {
   return (
     <>
       <HelpButton onClick={() => setHelpOpen(true)} />
+      
+      {/* Upload Image Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          onClick={() => setImageUploadOpen(true)}
+          variant="outline"
+          size="icon"
+          className="shadow-lg"
+          disabled={saveDialogOpen || helpOpen || imageUploadOpen}
+        >
+          <Upload className="w-4 h-4" />
+          <span className="sr-only">Upload Image</span>
+        </Button>
+      </div>
 
       <div className="flex flex-col items-center justify-center min-h-screen p-6">
         {/* Container for frame and knobs */}
@@ -182,6 +207,15 @@ export function EtchASketch() {
 
       {/* Help Drawer */}
       <HelpDrawer open={helpOpen} onOpenChange={setHelpOpen} />
+
+      {/* Image Upload Dialog */}
+      <ImageUploadDialog
+        open={imageUploadOpen}
+        onOpenChange={setImageUploadOpen}
+        onImageProcessed={handleImageProcessed}
+        canvasWidth={CANVAS_WIDTH}
+        canvasHeight={CANVAS_HEIGHT}
+      />
 
       {/* Shake animation */}
       <style jsx>{`
