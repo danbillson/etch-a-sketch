@@ -214,7 +214,8 @@ export function ImageUploadDialog({
         });
 
         // Build path by connecting nearest points
-        while (remainingEdges.length > 0 && points.length < 5000) {
+        // Limit to 7500 points to leave room for additional manual drawing before hitting Convex limit (8192)
+        while (remainingEdges.length > 0 && points.length < 7500) {
           let nearestIdx = 0;
           let nearestDist = Infinity;
 

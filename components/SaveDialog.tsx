@@ -31,6 +31,37 @@ interface SaveDialogProps {
   canvasHeight: number;
 }
 
+// Maximum points allowed by Convex (8192), using 8000 for safety margin
+const MAX_POINTS = 8000;
+
+// Simplify path to reduce point count while preserving shape
+function simplifyPath(points: Point[], maxPoints: number): Point[] {
+  if (points.length <= maxPoints) {
+    return points;
+  }
+
+  // Simple uniform sampling approach - evenly sample points
+  const step = points.length / maxPoints;
+  const simplified: Point[] = [];
+  
+  // Always include first point
+  simplified.push(points[0]);
+  
+  // Sample points evenly throughout the path
+  for (let i = 1; i < maxPoints - 1; i++) {
+    const sourceIndex = Math.floor(i * step);
+    if (sourceIndex > 0 && sourceIndex < points.length) {
+      simplified.push(points[sourceIndex]);
+    }
+  }
+  
+  // Always include last point
+  simplified.push(points[points.length - 1]);
+  
+  // Ensure we don't exceed maxPoints
+  return simplified.slice(0, maxPoints);
+}
+
 export function SaveDialog({
   open,
   onOpenChange,
@@ -58,10 +89,17 @@ export function SaveDialog({
 
     setIsSaving(true);
     try {
+      // Simplify path if it exceeds the maximum
+      const pointsToSave = simplifyPath(points, MAX_POINTS);
+      
+      if (points.length > MAX_POINTS) {
+        console.log(`Simplified path from ${points.length} to ${pointsToSave.length} points`);
+      }
+
       const drawingId = await saveDrawing({
         name: name.trim(),
         twitterHandle: twitterHandle.trim() || undefined,
-        points,
+        points: pointsToSave,
         canvasWidth,
         canvasHeight,
       });
